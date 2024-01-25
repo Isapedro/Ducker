@@ -26,22 +26,29 @@ body {
   line-height: 1;
   color: rgb(0, 23, 50);
   background-color: rgb(216, 238, 232);
+  
 }
 
 .game-container {
-  width: calc((48px * 9) + 4px);
+  width: calc((80px * 9) + 4px);
+  margin:0 auto;
+   
 }
 
 /* # Game Panel */
 
 h1 {
-  font-size: 40px;
+  text-align: center;
+  font-size: 70px;
+  padding: 30px;
+  
+  
 }
 
 .score {
   display: flex;
   justify-content: space-between;
-  font-size: 32px;
+  font-size: 42px;
 }
 
 /* # Game grid */
@@ -52,15 +59,15 @@ h1 {
 }
 
 .grid {
-  width: calc(48px * 9); /* 👈 change multiplier based on grid row count */
-  height: calc(48px * 9); /*👈 change multiplier based on game column count */
+  width: calc(80px * 9); /* 👈 change multiplier based on grid row count */
+  height: calc(80px * 9); /*👈 change multiplier based on game column count */
   display: flex;
   flex-wrap: wrap;
 }
 
 .cell {
-  width: 48px;
-  height: 48px;
+  width: 80px;
+  height: 80px;
   cursor: pointer;
   outline: 1px dashed grey;
   background-position: center;
