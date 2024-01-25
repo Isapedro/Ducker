@@ -1,7 +1,7 @@
 //select the reevant elemnents from html
 const grid = document.querySelector(".grid");
 const timer = document.querySelector(".timer");
-const endGameSreen = document.querySelector(".end-game-screen");
+const endGameScreen = document.querySelector(".end-game-screen");
 const endGameText = document.querySelector(".end-game-text");
 const playAgainBtn = document.querySelector(".play-again");
 
@@ -15,13 +15,13 @@ const gridMatrix = [
     "wood",
     "river",
     "river",
-    "river",
+    "wood",
     "wood",
   ],
   ["river", "river", "wood", "wood", "river", "river", "wood", "river", "wood"],
   ["", "", "", "", "", "", "", "", ""],
   ["road", "bus", "road", "road", "road", "car", "road", "road", "car"],
-  ["road", "bus", "road", "car", "road", "road", "bus", "road", "bus"],
+  ["road", "bus", "road", "road", "road", "road", "bus", "road", "road"],
   ["road", "road", "car", "road", "road", "bus", "road", "road", "car"],
   ["", "", "", "", "", "", "", "", ""],
   ["", "", "", "", "", "", "", "", ""],
@@ -85,15 +85,98 @@ function moveDuck(event) {
   render();
 }
 
+
+//Animation Functions
+
+function moveRight(gridRowIndex){
+  //get all of the cells in the current row
+  const currentRow = gridMatrix[gridRowIndex];
+
+//remove the last element...
+  const lastElement = currentRow.pop();
+
+//and put it back to the begining i.e index 0
+currentRow.unshift(lastElement);
+}
+function moveLeft(gridRowIndex){
+const currentRow = gridMatrix[gridRowIndex];
+const firstElement = currentRow.shift();
+currentRow.push(firstElement);
+}
+function animateGame(){
+  //animate river
+  moveRight(1);
+  moveLeft(2);
+
+  //animate road
+  moveRight(4);
+  moveLeft(5);
+  moveRight(6);
+
+}
+function updateDuckPosition(){
+gridMatrix[duckPosition.y][duckPosition.x] = contentBeforeDuck;
+if(contentBeforeDuck ==="wood"){
+  if(duckPosition.y ===1 && duckPosition.x < 8 ) duckPosition.x++;
+  else if(duckPosition.y === 2 && duckPosition.x > 0) duckPosition.x--;
+}
+
+}
+function checkPosition(){
+  if(duckPosition.y === victoryRow) endGame("duck-arrived");
+  else if(contentBeforeDuck === "river") endGame("duck-drowned");
+  else if (contentBeforeDuck === "car" || contentBeforeDuck ==="bus")
+  endGame("duck-hit");
+}
+
+
+//Game win/loss logic
+function endGame(reason){
+  //victory
+  if(reason === "duck-arrived"){
+    endGameText.innerHTML = `You <br> Win!`;
+    endGameScreen.classList.add("win");
+  }
+
+  gridMatrix[duckPosition.y][duckPosition.x]= reason;
+  clearInterval(countdownLoop);
+  //stop the game loop
+  clearInterval(renderLoop)
+  //stop the player from being to control the duck
+document.removeEventListener("keyup", moveDuck);
+  //display game over
+  endGameScreen.classList.remove("hidden");
+}
+
+function countdown(){
+  if(time!==0){
+  time--;
+  timer.innerText = time.toString().padStart(3, "0");
+  }
+  if(time==0){
+    //end the game player lost
+endGame();
+  }
+}
+
+//Rendering
 function render() {
   //display on the screen
   placeDuck();
+  checkPosition();
   drawGrid();
 }
 
 const renderLoop = setInterval(function(){
-  gridMatrix[duckPosition.y][duckPosition.x] = contentBeforeDuck;
+  updateDuckPosition();
+  animateGame();
   render();
 }, 600);
 
+const countdownLoop = setInterval(countdown, 1000);
+
 document.addEventListener("keyup", moveDuck);
+
+playAgainBtn.addEventListener("click", function(){
+  location.reload();
+})
